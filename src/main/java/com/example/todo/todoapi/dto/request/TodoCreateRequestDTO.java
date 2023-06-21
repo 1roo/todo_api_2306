@@ -23,5 +23,4 @@ public class TodoCreateRequestDTO {
                 .build();
     }
 
-
 }
