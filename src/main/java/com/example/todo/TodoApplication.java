@@ -1,17 +1,13 @@
-package com.example.todo.todoapi.dto.request;
+package com.example.todo;
 
-import lombok.*;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import javax.validation.constraints.NotBlank;
+@SpringBootApplication
+public class TodoApplication {
 
-@Setter @Getter
-@ToString @EqualsAndHashCode
-@NoArgsConstructor @AllArgsConstructor
-@Builder
-public class TodoModifyRequestDTO {
-
-	@NotBlank
-	private String id;
-	private boolean done;
+    public static void main(String[] args) {
+        SpringApplication.run(TodoApplication.class, args);
+    }
 
 }
