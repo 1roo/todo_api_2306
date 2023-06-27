@@ -8,10 +8,11 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Setter@Getter
+@Getter
 @ToString @EqualsAndHashCode(of = "id")
 @NoArgsConstructor @AllArgsConstructor
 @Builder
+
 @Entity
 @Table(name = "tbl_user")
 public class User {
@@ -20,7 +21,7 @@ public class User {
     @Column(name = "user_id")
     @GeneratedValue(generator = "system-uuid")
     @GenericGenerator(name = "system-uuid", strategy = "uuid")
-    private String id; //계정명이 아니라 식별 코드로 쓸 것.
+    private String id; // 계정명이 아니라 식별 코드
 
     @Column(unique = true, nullable = false)
     private String email;
@@ -36,8 +37,27 @@ public class User {
 
     @Enumerated(EnumType.STRING)
 //    @ColumnDefault("'COMMON'")
+    @Builder.Default
     private Role role = Role.COMMON; //유저 권한
 
+    // 등급 수정 메서드
+    public void changeRole(Role role) {
+        this.role = role;
+    }
 
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
