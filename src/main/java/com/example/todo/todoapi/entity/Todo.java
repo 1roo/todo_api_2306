@@ -6,6 +6,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import com.example.todo.userapi.entity.User;
 
 @Setter @Getter
 @ToString @EqualsAndHashCode(of = "todoId")
@@ -28,7 +29,9 @@ public class Todo {
     @CreationTimestamp
     private LocalDateTime createDate; //등록시간
 
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
 
 
