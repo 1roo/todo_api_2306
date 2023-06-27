@@ -1,5 +1,7 @@
 package com.example.todo.todoapi.api;
 
+import com.example.todo.auth.TokenUserInfo;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import com.example.todo.todoapi.dto.request.TodoCreateRequestDTO;
 import com.example.todo.todoapi.dto.request.TodoModifyRequestDTO;
 import com.example.todo.todoapi.dto.response.TodoListResponseDTO;
@@ -25,6 +27,7 @@ public class TodoController {
     //할 일 등록 요청
     @PostMapping
     public ResponseEntity<?> createTodo(
+            @AuthenticationPrincipal TokenUserInfo userInfo,
             @Validated @RequestBody TodoCreateRequestDTO requestDTO,
             BindingResult result
     ) {
@@ -36,7 +39,7 @@ public class TodoController {
         }
 
         try {
-            TodoListResponseDTO responseDTO = todoService.create(requestDTO);
+            TodoListResponseDTO responseDTO = todoService.create(requestDTO, userInfo.getUserId());
             return ResponseEntity
                     .ok()
                     .body(responseDTO);
@@ -74,9 +77,12 @@ public class TodoController {
 
     //할 일 목록 요청
     @GetMapping
-    public ResponseEntity<?> retrieveTodoList() {
+    public ResponseEntity<?> retrieveTodoList(
+            // 토큰에 인증된 사용자 정보를 불러올 수 있음.
+            @AuthenticationPrincipal TokenUserInfo userInfo
+    ) {
         log.info("/api/todos GET request");
-        TodoListResponseDTO responseDTO = todoService.retrieve();
+        TodoListResponseDTO responseDTO = todoService.retrieve(userInfo.getUserId());
 
         return ResponseEntity.ok().body(responseDTO);
     }

@@ -35,8 +35,8 @@ public class User {
     private LocalDateTime joinDate;
 
     @Enumerated(EnumType.STRING)
-    @ColumnDefault("'COMMON'")
-    private Role role; //유저 권한
+//    @ColumnDefault("'COMMON'")
+    private Role role = Role.COMMON; //유저 권한
 
 
 
