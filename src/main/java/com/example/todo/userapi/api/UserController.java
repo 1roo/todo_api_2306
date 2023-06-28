@@ -16,6 +16,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
@@ -47,10 +48,12 @@ public class UserController {
     //POST: /api/auth
     @PostMapping
     public ResponseEntity<?> signup(
-            @Validated @RequestBody UserRequestSignUpDTO dto,
+            @Validated @RequestPart("user") UserRequestSignUpDTO dto,
+            @RequestPart(value = "profileImage", required = false) MultipartFile profileImg,
             BindingResult result
     ) {
         log.info("/api/auto POST - {}", dto);
+
 
         if(result.hasErrors()) {
             log.warn(result.toString());
@@ -58,19 +61,32 @@ public class UserController {
                     .body(result.getFieldError());
         }
 
-        try {
-            UserSignUpResponseDTO responseDTO = userService.create(dto);
-            return ResponseEntity.ok()
+    try {
+
+        String uploadedFilePath = null;
+
+        if(profileImg != null) {
+            log.info("attached file name: {}", profileImg.getOriginalFilename());
+            uploadedFilePath = userService.uploadProfileImage(profileImg);
+        }
+
+
+        UserSignUpResponseDTO responseDTO = userService.create(dto, uploadedFilePath);
+        return ResponseEntity.ok()
                     .body(responseDTO);
-        } catch (NoRegisteredArgumentsException e) {
+    } catch (NoRegisteredArgumentsException e) {
             log.warn("필수 가입 정보를 전달받지 못했습니다.");
             return ResponseEntity.badRequest()
                     .body(e.getMessage());
-        } catch (DuplicatedEmailException e) {
+    } catch (DuplicatedEmailException e) {
             log.warn("이메일이 중복되었습니다.");
             return ResponseEntity.badRequest()
                     .body(e.getMessage())
-;        }
+;   } catch (Exception e) {
+            log.warn("기타예외가 발생함");
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+    }
 
     }
 
